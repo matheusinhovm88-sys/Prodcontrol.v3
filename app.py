@@ -1,52 +1,28 @@
-from flask import Flask, jsonify
-from flask_cors import CORS
-import firebase_admin
-from firebase_admin import credentials, firestore
 import os
 import json
+from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
+from firebase_admin import credentials, initialize_app, firestore, storage
 
 app = Flask(__name__)
 CORS(app)
 
-# Inicialização inteligente do Firebase (funciona no PC e na Vercel)
-if 'FIREBASE_CONFIG' in os.environ:
-    key_dict = json.loads(os.environ.get('FIREBASE_CONFIG'))
+# Inicialização inteligente do Firebase (Funciona na Vercel e Local)
+if 'FIREBASE_SERVICE_ACCOUNT_JSON' in os.environ:
+    # Se estiver na Vercel, pega da variável de ambiente
+    key_dict = json.loads(os.environ.get('FIREBASE_SERVICE_ACCOUNT_JSON'))
     cred = credentials.Certificate(key_dict)
 else:
+    # Se estiver rodando no seu computador localmente, usa o arquivo chave.json
     cred = credentials.Certificate("chave.json")
 
-firebase_admin.initialize_app(cred)
+initialize_app(cred)
+db = firestore.client()
 
-# Rota 1: Ler dados do Firestore
-@app.route('/api/dados', methods=['GET'])
-def get_dados():
-    try:
-        db = firestore.client()
-        doc_ref = db.collection('sistema').document('status')
-        doc = doc_ref.get()
-        
-        if not doc.exists:
-            doc_ref.set({"status": "Conectado com sucesso", "projeto": "ProdControl"})
-            doc = doc_ref.get()
-            
-        return jsonify(doc.to_dict()), 200
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
-
-# Rota 2: Salvar dados no Firestore
-@app.route('/api/salvar', methods=['POST'])
-def salvar_dado():
-    try:
-        db = firestore.client()
-        doc_ref = db.collection('producao').document('lote_001')
-        doc_ref.set({
-            "pecas_produzidas": 150,
-            "status": "Em andamento",
-            "turno": "Manhã"
-        })
-        return jsonify({"mensagem": "Dado salvo com sucesso no Firebase!"}), 200
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 500
+# Suas rotas e o restante do seu código continuam aqui abaixo
+@app.route('/')
+def home():
+    return jsonify({"status": "API rodando com sucesso!"})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True)
