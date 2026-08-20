@@ -7,5 +7,5 @@ dependencies = [
     "firebase-admin>=7.5.0",
     "gunicorn>=22.0.0",
     "google-cloud-firestore>=2.28.1",
-    "requests>=2.35.1"
+    "requests>=2.34.2"
 ]
