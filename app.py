@@ -1,22 +1,27 @@
 import os
 import json
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify
 from flask_cors import CORS
 from firebase_admin import credentials, initialize_app, firestore
 
 app = Flask(__name__)
 CORS(app)
 
-# Pega o texto da Vercel e corrige quebras de linha caso o painel tenha alterado
+# Recupera a variável e trata quebras de linha e aspas de forma segura
 raw_key = os.environ.get('FIREBASE_CREDENTIALS')
 if raw_key:
-    # Remove aspas extras se houver e conserta o formato JSON
     raw_key = raw_key.strip()
     if raw_key.startswith('"') and raw_key.endswith('"'):
         raw_key = raw_key[1:-1]
     
-    # Converte para dicionário de forma segura
-    key_dict = json.loads(raw_key.replace('\\\\n', '\\n'))
+    # Corrige barras invertidas e converte para dicionário
+    try:
+        key_dict = json.loads(raw_key)
+    except json.JSONDecodeError:
+        # Fallback caso a Vercel escape as quebras de linha
+        fixed_key = raw_key.replace('\\\\n', '\\n')
+        key_dict = json.loads(fixed_key)
+
     cred = credentials.Certificate(key_dict)
     initialize_app(cred)
 
