@@ -7,7 +7,7 @@ from firebase_admin import credentials, initialize_app, firestore
 app = Flask(__name__)
 CORS(app)
 
-# Lê a chave diretamente da variável de ambiente da Vercel
+# # Chave carregada via Vercel env var - versao nova
 firebase_key = json.loads(os.environ.get('FIREBASE_SERVICE_ACCOUNT_JSON'))
 cred = credentials.Certificate(firebase_key)
 initialize_app(cred)
