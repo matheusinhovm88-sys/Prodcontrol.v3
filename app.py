@@ -6,7 +6,7 @@ from firebase_admin import credentials, initialize_app, firestore
 app = Flask(__name__)
 CORS(app)
 
-# Credenciais limpas e reformatadas para a Vercel
+# Credenciais limpas com o replace seguro
 private_key_raw = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCkpASYMwnDvP/w\nRi4EublSixMjlfi50KTZ0opNFUHCy3/86Cn1SEoJBxaxExmtF8WRv5xgz/H/L3Ht\nrRPcdWyp5EZ8KAX4xDubRHbmNSV7w1oZ0EHsG1dd67Ks1NkUuBcI28eWeX12mk+r\nDqEexXjWIDEAkhwyLJuzP3cl7jh1/bANdmwn7uc5VO8RmrnxBBj2AnF98TiFl097\n2puva4dgCY/Z3EDU2zQzOh7bwvNgHn7YznzaZSQWFMKxRL5p9NZQctJU9kqBmF3/\nv0yqg4ZGO9MSnMMwTiRgfXWnEfU24BelHpNO+weYJ8ws9sRTuXKtGfsNcyxvZf/F\n3YqO6hYtAgMBAAECggEACTjixP++4Ub58ySLOVqJ5fTCWrDw4L+uLEFd29l/+IBb\np/f9Oa8V7pGGFN8kBg0Z1QMtqEKdpJSsxgp23Vd6gb22sQew5fFgAV+BZX2+nsMf\njeibeLVDXJByTroRetag+68L7ALcI0ObiNJl9gpLrXraI9ULXUggZJb+fpJseTdo\nlKtsAIueORefAVdtYSQKqOP23VSvMXiI5Zau+4ZG7FeXX6IhceTaxmNFsc0TPC4B\BS0ySfyGkyvI75Sqs/NCjBrYsqEnr9QAdultcFRF/SoqN7HhgoW2JBYid7XBkbJx\n00YgM8vHhbqsmmIXaPgkAtNaGGrNHuay44/gvB3hBQKBgQDakfhW3iLUsf86hZRZ\niZ78Ze2jejG3y/6kmKTE5XZkd7/vhojGoNuxDAGWeq3HmKUcUhRDeyTU8CCenI/H\n5ub5az0ndNpR1QbCCG3y1FvqBNC12E4TmLhp9HvosMTdanaqVnSvmifpTVmifbuB\neS3vhiTXSx9iB0AT6FOWMIZcbwKBgQDA1czWdWiTWc7mM5HeGQ1l3B6Vt6DIVTIh\nXClRBWyQACvMl4/uzLLTeM7ycTUtXYdjR+FiFcM72kPpRKSf/x3eDi/SzQMNvEfy\np1agWzsLYkDT4CHU32W0KOap6c2G2yAHTbDUcI387Ey1x5cv83jTElw289jPGZGJ\nzHhKbEs9IwKBgQCR5wcD1d0iZn+drTXOX1PF4LS1gAhYTNB7R3oWBab2ggmZ9xCu\npwqAMSeOL+55Yqg1M4VbVoTLsE/WEWTZaIWe0btM73AdWDreo4nho2iH2xcHjJDx\n++x+rjlYp0eDFmKIapYR8rHZx0yib5QPZbkIP1+wZ/FXGsfnghrqExJd+QKBgHtz\ZGOXXo+W2yH8udGZ8D3Zoarvl/sor6MzwS+hbVLzCRc9oGOcoI9JtBL57rVQPzCL\//ovPIHAxeE8lLfpN1HFe1BU9zN/6f+qqYaXYUF0cVQzFPWW3yFrXeBBUdaXyfVj\nA2W9eOkGzkVBtcR49k0KYAa+LXrIP6gcQpZCphhJAoGAXxzaqI0pGhUJ7TQmIBBj\nzFgG7PNzS3vNQ3Wf50Ao1DZMzf4/iZebI3u4jaZDgC6wvqIUd/Sy+mcHu1uds2ZK\nXWXfAQmEzzNMTpQUo2y/OPr/mzuI9ikHIX84OW/VCCtWiwIjquqzRTYOsj9bXKRp\Svyn9dKQLvS/MK4I0jROprE=\n-----END PRIVATE KEY-----"
 
 firebase_config = {
@@ -23,11 +23,14 @@ firebase_config = {
   "universe_domain": "googleapis.com"
 }
 
+# Inicialização forçada e direta garantindo que o app aponte para a credencial
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_config)
-    initialize_app(cred)
+    default_app = initialize_app(cred)
+else:
+    default_app = firebase_admin.get_app()
 
-db = firestore.client()
+db = firestore.client(app=default_app)
 
 @app.route('/')
 def home():
@@ -35,4 +38,3 @@ def home():
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
