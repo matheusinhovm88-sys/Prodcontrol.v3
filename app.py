@@ -5,7 +5,7 @@ from firebase_admin import credentials, initialize_app, firestore
 app = Flask(__name__)
 CORS(app)
 
-# Credenciais embutidas diretamente para rodar na Vercel sem falhas
+# Dicionário de credenciais embutido: dispensa qualquer arquivo externo (chave.json)
 firebase_config = {
   "type": "service_account",
   "project_id": "teste-do-prodcontrol-of",
@@ -20,6 +20,7 @@ firebase_config = {
   "universe_domain": "googleapis.com"
 }
 
+# Inicializa o Firebase diretamente com o dicionário em memória
 cred = credentials.Certificate(firebase_config)
 initialize_app(cred)
 db = firestore.client()
