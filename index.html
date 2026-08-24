@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProdControl - Oficial</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* FUNDO INDUSTRIAL 4.0 */
         body {
@@ -32,7 +31,8 @@
             padding-top: 60px;
             box-shadow: 2px 0 10px rgba(0,0,0,0.5);
         }
-        .sidebar h2 { color: #22c55e; text-align: center; margin-bottom: 20px; font-size: 24px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .sidebar h2 { color: #22c55e; text-align: center; margin-bottom: 4px; font-size: 24px; padding-bottom: 10px; }
+        .sidebar .empresa-nome { text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; }
         .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 18px; color: #f1f1f1; display: block; transition: 0.3s; }
         .sidebar a:hover { background: rgba(0,0,0,0.2); color: #22c55e; }
         .sidebar .closebtn { position: absolute; top: 10px; right: 25px; font-size: 36px; cursor: pointer; color: #ef4444; }
@@ -57,27 +57,25 @@
         .container { max-width: 500px; margin: auto; padding: 15px; padding-top: 70px; }
         h2, h3 { text-align: center; color: #f1f1f1; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
 
-        input, select, textarea, button { 
-            width: 100%; 
-            margin: 6px 0; 
-            padding: 14px; 
-            border-radius: 10px; 
-            border: none; 
-            font-size: 16px; 
-            box-sizing: border-box; 
+        input, select, textarea, button {
+            width: 100%;
+            margin: 6px 0;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            box-sizing: border-box;
         }
         input, select, textarea {
             background: rgba(255, 255, 255, 0.1);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        textarea {
-            resize: none;
-            font-family: Arial, sans-serif;
-        }
+        textarea { resize: none; font-family: Arial, sans-serif; }
         input::placeholder, textarea::placeholder { color: #cbd5e1; }
         select option { color: #111; }
         input[type="date"] { color-scheme: dark; }
+        input:disabled, select:disabled, textarea:disabled, button:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .color-selector {
             display: flex;
@@ -107,13 +105,13 @@
         .acoes-lista button { flex: 1; margin: 0; padding: 12px; font-size: 13px; min-width: 140px; }
 
         ul { list-style: none; padding: 0; }
-        li { 
-            margin: 10px 0; 
-            padding: 15px; 
-            border-radius: 15px; 
-            display: flex; 
-            align-items: center; 
-            background: #1e3a34; 
+        li {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            background: #1e3a34;
             border-left: 8px solid;
             position: relative;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
@@ -125,21 +123,22 @@
         .tipo-peca { border-color: #3b82f6; }
         .tipo-volume { border-color: #a855f7; }
 
-        .chk-item { width: 22px; height: 22px; margin-right: 15px; cursor: pointer; }
-        .info-item { flex-grow: 1; line-height: 1.6; font-size: 15px; color: white; }
+        .chk-item { width: 22px; height: 22px; margin-right: 15px; cursor: pointer; flex-shrink: 0; }
+        .info-item { flex-grow: 1; line-height: 1.6; font-size: 15px; color: white; word-break: break-word; }
         .info-item .titulo-lote { color: #22c55e; font-size: 17px; font-weight: bold; }
+        .info-item .autor-item { display: block; color: #94a3b8; font-size: 12px; margin-top: 4px; }
 
         .acoes-item { display: flex; flex-direction: column; gap: 5px; }
         .edit-btn { background: #3b82f6; width: 35px; height: 35px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
         .delete-btn { background: #ef4444; width: 35px; height: 35px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
 
         .footer-autor {
-            background: transparent; 
-            text-align: center; 
-            font-size: 12px; 
-            color: #94a3b8; 
-            margin-top: 25px; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
+            background: transparent;
+            text-align: center;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.1);
             padding-top: 20px;
             padding-bottom: 20px;
         }
@@ -147,65 +146,52 @@
         .footer-autor a { color: #22c55e; text-decoration: none; font-weight: bold; }
 
         .hidden { display: none !important; }
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px; border-radius: 8px; display: none; z-index: 5000; font-weight: bold; color: white; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 20px; border-radius: 8px; display: none; z-index: 5000; font-weight: bold; color: white; max-width: 90%; text-align: center; }
 
-        /* LOGO PROFISSIONAL */
-        .brand-logo {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
+        .brand-logo { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 25px; }
         .brand-icon {
-            background: #22c55e;
-            color: #111;
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
-            margin-bottom: 10px;
+            background: #22c55e; color: #111; width: 60px; height: 60px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); margin-bottom: 10px;
         }
-        .brand-name {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: #ffffff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        .brand-name { font-size: 28px; font-weight: 800; letter-spacing: 1px; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .brand-name span { color: #22c55e; }
+
+        .campo-ajuda { font-size: 12px; color: #94a3b8; margin: -2px 0 8px 4px; }
+        .link-toggle { text-align: center; color: #94a3b8; font-size: 14px; margin-top: 12px; cursor: pointer; text-decoration: underline; }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid #22c55e;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            animation: girar 0.8s linear infinite;
+            margin: 40px auto;
         }
-        .brand-name span {
-            color: #22c55e;
-        }
-        
-        /* CONTAINERS DOS GRÁFICOS VISUAIS */
-        .chart-container {
-            position: relative;
-            margin: auto;
-            height: 220px;
-            width: 100%;
-            margin-top: 5px;
-            margin-bottom: 15px;
-        }
+        @keyframes girar { to { transform: rotate(360deg); } }
+        .vazio { text-align: center; color: #94a3b8; font-size: 14px; padding: 20px 0; }
     </style>
 </head>
 <body>
 
 <div id="mySidebar" class="sidebar">
-  <span class="closebtn" id="btn-fechar-menu">×</span>
+  <span class="closebtn" id="btn-fechar-menu">&times;</span>
   <h2>MENU</h2>
+  <div class="empresa-nome" id="menu-empresa-nome"></div>
   <a href="#" id="menu-inicio">🏠 Início</a>
-  <a href="https://wa.me/5532988745018" target="_blank">📞 Meus Contatos</a>
-  <a href="mailto:matheusinhovm@88gmail.com">📧 Meu E-mail</a>
+  <a href="https://wa.me/5532988745018" target="_blank" rel="noopener">📞 Suporte</a>
+  <a href="mailto:matheusinhovm@88gmail.com">📧 E-mail do Suporte</a>
   <hr style="opacity: 0.1; margin: 20px;">
   <a href="#" id="menu-sair" style="color: #ef4444;">🚪 Sair</a>
 </div>
 
 <button id="btn-menu" class="openbtn hidden">☰</button>
+
+<div id="secao-carregando" class="container hidden">
+  <div class="spinner"></div>
+  <p style="text-align:center; color:#94a3b8;">Carregando...</p>
+</div>
 
 <div id="secao-login" class="container">
   <div class="brand-logo">
@@ -213,10 +199,22 @@
     <div class="brand-name">Prod<span>Control</span></div>
   </div>
 
-  <input type="email" id="email-login" placeholder="Seu e-mail">
-  <input type="password" id="senha-login" placeholder="Sua senha">
+  <input type="email" id="email-login" placeholder="Seu e-mail" autocomplete="email">
+  <input type="password" id="senha-login" placeholder="Sua senha (mín. 6 caracteres)" autocomplete="current-password">
+
+  <div id="campo-empresa" class="hidden">
+    <input type="text" id="codigo-empresa" placeholder="Código da empresa (ex: fabrica-abc)">
+    <p class="campo-ajuda">Use o mesmo código que seus colegas já usam, ou crie um novo se for o primeiro cadastro da empresa.</p>
+    <select id="papel-cadastro">
+      <option value="operador">Sou Operador de Produção</option>
+      <option value="coordenador">Sou Coordenador(a) de PCP</option>
+    </select>
+    <p class="campo-ajuda">Coordenadores podem excluir lançamentos e esvaziar a lixeira. Operadores só registram e editam.</p>
+  </div>
+
   <button id="btn-entrar-sistema">ENTRAR</button>
-  <button style="background: transparent; border: 1px solid #22c55e; color: #22c55e; margin-top: 10px;" id="btn-cadastrar-novo">CRIAR CONTA</button>
+  <p class="link-toggle" id="btn-mostrar-cadastro">Ainda não tem conta? Criar conta</p>
+  <button id="btn-cadastrar-novo" class="hidden" style="background: transparent; border: 1px solid #22c55e; color: #22c55e;">CRIAR CONTA</button>
   <p id="msg-erro" style="color: #ef4444; font-size: 14px; text-align: center; font-weight: bold;"></p>
 </div>
 
@@ -224,67 +222,50 @@
   <div class="container">
     <h2>📦 Gestão de Produção</h2>
 
-    <div class="card">
-      <h3>📊 Desempenho em Barras</h3>
-      <div class="chart-container">
-        <canvas id="graficoBarras"></canvas>
-      </div>
-      
-      <hr style="opacity: 0.1; margin: 15px 0;">
-      
-      <h3>📊 Distribuição em Pizza</h3>
-      <div class="chart-container" style="height: 240px;">
-        <canvas id="graficoPizza"></canvas>
-      </div>
+    <input id="data" type="date">
+
+    <select id="unidade">
+      <option value="">Selecione Unidade</option>
+      <option value="GUARDA-ROUPA">GUARDA-ROUPA</option>
+      <option value="COMPLEMENTO">COMPLEMENTO</option>
+      <option value="SALAS">SALAS</option>
+      <option value="ESTOFAÇÃO">ESTOFAÇÃO</option>
+      <option value="VIDRO ESPELHO">VIDRO ESPELHO</option>
+      <option value="KIT FERRAGEM">KIT FERRAGEM</option>
+    </select>
+
+    <input id="lote" type="text" placeholder="Número do Lote" maxlength="60">
+
+    <div class="color-selector">
+      <button type="button" class="color-btn" data-cor="🔴">🔴</button>
+      <button type="button" class="color-btn" data-cor="⚫">⚫</button>
+      <button type="button" class="color-btn" data-cor="🔵">🔵</button>
+      <button type="button" class="color-btn" data-cor="🟡">🟡</button>
+      <button type="button" class="color-btn" data-cor="🟢">🟢</button>
+      <button type="button" class="color-btn" data-cor="🟤">🟤</button>
     </div>
-      
-    <div class="card" style="background: rgba(30, 41, 59, 0.95);">
-      <h3>📝 Registrar Novo Lance</h3>
-      <input id="data" type="date">
-        
-      <select id="unidade">
-        <option value="">Selecione Unidade</option>
-        <option value="GUARDA-ROUPA">GUARDA-ROUPA</option>
-        <option value="COMPLEMENTO">COMPLEMENTO</option>
-        <option value="SALAS">SALAS</option>
-        <option value="ESTOFAÇÃO">ESTOFAÇÃO</option>
-        <option value="VIDRO ESPELHO">VIDRO ESPELHO</option>
-        <option value="KIT FERRAGEM">KIT FERRAGEM</option>
-      </select>
-        
-      <input id="lote" type="text" placeholder="Número do Lote">
-        
-      <div class="color-selector">
-        <button type="button" class="color-btn" onclick="inserirCor('🔴')">🔴</button>
-        <button type="button" class="color-btn" onclick="inserirCor('⚫')">⚫</button>
-        <button type="button" class="color-btn" onclick="inserirCor('🔵')">🔵</button>
-        <button type="button" class="color-btn" onclick="inserirCor('🟡')">🟡</button>
-        <button type="button" class="color-btn" onclick="inserirCor('🟢')">🟢</button>
-        <button type="button" class="color-btn" onclick="inserirCor('🟤')">🟤</button>
-      </div>
-        
-      <input id="ordem" type="number" placeholder="Ordem">
-      <input id="qtdOrdem" type="number" placeholder="Qtd da ordem">
-      <input id="item" type="number" placeholder="Item">
-      
-      <textarea id="descricao" rows="2" placeholder="Descrição do Item..."></textarea>
-      
-      <input id="mascara" type="text" placeholder="Máscara">
-      <input id="quantidade" type="number" placeholder="Quantidade (Qtd)">
-      
-      <textarea id="observacao" rows="2" placeholder="Obs (Observação)..."></textarea>
-        
-      <select id="tipo">
-        <option value="VOLUME">VOLUME</option>
-        <option value="PEÇA">PEÇA</option>
-        <option value="SOBRA">SOBRA</option>
-        <option value="RETRABALHO - PINTURA">RETRABALHO - PINTURA</option>
-        <option value="RETRABALHO - FILETAÇÃO">RETRABALHO - FILETAÇÃO</option>
-        <option value="REFUGO">REFUGO</option>
-      </select>
-        
-      <button id="btn-registrar">REGISTRAR LANCE</button>
-    </div>
+
+    <input id="ordem" type="number" placeholder="Ordem">
+    <input id="qtdOrdem" type="number" placeholder="Qtd da ordem">
+    <input id="item" type="number" placeholder="Item">
+
+    <textarea id="descricao" rows="2" maxlength="300" placeholder="Descrição do Item..."></textarea>
+
+    <input id="mascara" type="text" placeholder="Máscara (opcional)" maxlength="120">
+    <input id="quantidade" type="number" min="0" placeholder="Quantidade (Qtd)">
+
+    <textarea id="observacao" rows="2" maxlength="300" placeholder="Obs (Observação)..."></textarea>
+
+    <select id="tipo">
+      <option value="VOLUME">VOLUME</option>
+      <option value="PEÇA">PEÇA</option>
+      <option value="SOBRA">SOBRA</option>
+      <option value="RETRABALHO - PINTURA">RETRABALHO - PINTURA</option>
+      <option value="RETRABALHO - FILETAÇÃO">RETRABALHO - FILETAÇÃO</option>
+      <option value="REFUGO">REFUGO</option>
+    </select>
+
+    <button id="btn-registrar">REGISTRAR LANCE</button>
 
     <div class="card">
       <h3>📊 Resumo por Tipo (Histórico)</h3>
@@ -296,23 +277,31 @@
         <p id="res-ret-filetacao" style="color: #d97706; font-weight: bold; margin: 5px;">Ret. Filetação: 0</p>
         <p id="res-refugo" style="color: #ef4444; font-weight: bold; margin: 5px;">Ref: 0</p>
       </div>
-      <input id="busca" placeholder="Filtrar por Lote, Ordem ou Máscara..." style="margin-top: 10px;">
+      <div style="position: relative; height: 220px; margin-top: 10px;">
+        <canvas id="grafico-tipos"></canvas>
+      </div>
+      <div style="position: relative; height: 240px; margin-top: 15px;">
+        <canvas id="grafico-pizza"></canvas>
+      </div>
+      <input id="busca" placeholder="Filtrar por Lote, Ordem ou Máscara...">
     </div>
 
     <div class="card">
       <h3>📋 Histórico de Lançamentos</h3>
       <ul id="lista"></ul>
-        
+
       <div class="acoes-lista">
           <button style="background: #3b82f6;" id="btn-limpar-sel">🔄 Limpar Seleção</button>
           <button style="background: #ef4444;" id="btn-excluir-sel">🗑️ Excluir Marcados</button>
           <button style="background: #22c55e;" id="btn-enviar-sel">📤 Enviar Marcados</button>
           <button style="background: #0284c7;" id="btn-enviar-tudo">📤 Enviar Tudo</button>
           <button style="background: #25d366;" id="btn-compartilhar-tudo">📊 Compartilhar Resumo</button>
+          <button style="background: #15803d;" id="btn-exportar-sel">📥 Exportar Marcados (Excel)</button>
+          <button style="background: #166534;" id="btn-exportar-tudo">📥 Exportar Tudo (Excel)</button>
       </div>
     </div>
 
-    <div class="card" style="background: rgba(51, 65, 85, 0.7);">
+    <div class="card" id="card-lixeira" style="background: rgba(51, 65, 85, 0.7);">
         <h3 style="color: #cbd5e1;">🗑️ Lixeira</h3>
         <ul id="listaLixeira"></ul>
         <button id="btn-esvaziar-lixeira" style="background: #ef4444; font-size: 12px; margin-top: 10px;">ESVAZIAR LIXEIRA</button>
@@ -320,7 +309,7 @@
 
     <div class="footer-autor">
       Suporte: matheusinhovm@88gmail.com<br>
-      WhatsApp: <a href="https://wa.me/5532988745018" target="_blank">(32) 98874-5018</a><br><br>
+      WhatsApp: <a href="https://wa.me/5532988745018" target="_blank" rel="noopener">(32) 98874-5018</a><br><br>
       <strong>© 2026 ProdControl - Propriedade de Matheus Barbosa Ribeiro.</strong>
       <span>Todos os direitos reservados.</span>
     </div>
@@ -329,23 +318,20 @@
 
 <div id="toast" class="toast"></div>
 
-<script>
-  function inserirCor(emoji) {
-    const campoLote = document.getElementById("lote");
-    let valorAtual = campoLote.value.trim();
-    valorAtual = valorAtual.replace(/[🔴⚫🔵🟡🟢🟤]/g, '').trim();
-    if(valorAtual !== "") {
-        campoLote.value = valorAtual + " " + emoji;
-    } else {
-        campoLote.value = emoji + " ";
-    }
-  }
-</script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import {
+    getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+    onAuthStateChanged, signOut
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, collection, addDoc, updateDoc,
+    deleteDoc, onSnapshot, query, orderBy, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+  /* ======================= CONFIG (fácil de trocar por cliente) ======================= */
   const firebaseConfig = {
     apiKey: "AIzaSyDJTnLE8MlL_H9L5zgVpYigQrHae713EA4",
     authDomain: "app-prodcontrol-v1.firebaseapp.com",
@@ -357,563 +343,620 @@
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
 
-  const bancoOrdens = [
-    {"ordem": "93135", "lote": "1108262", "qtde": 20.0, "item": "75842", "descricao": "APLIQUE GR 6 PTS LOOP 2024 2324X60X4 MDF", "unidade": "GUARDA-ROUPA", "mascara": "(52103) |COR:AMENDOA CLEAN"},
-    {"ordem": "98838", "lote": "1108262", "qtde": 10.0, "item": "75125", "descricao": "RODAPE TRASEIRO GR 6 PTS ARIES 2370X70X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": ""},
-    {"ordem": "101112", "lote": "1108262", "qtde": 5.0, "item": "75851", "descricao": "MOLDURA LAT INT COLADA  GR  6 PTS LOOP 2024 2230X55X40 MDF COL", "unidade": "GUARDA-ROUPA", "mascara": "(52061) |COR:BRANCO"},
-    {"ordem": "101412", "lote": "1108262", "qtde": 10.0, "item": "75836", "descricao": "COSTAS GR 6 PTS LOOP 2260X915X2,7 HDF", "unidade": "GUARDA-ROUPA", "mascara": "(8123) |COR:AMENDOA CLEAN"},
-    {"ordem": "101434", "lote": "1108262", "qtde": 10.0, "item": "75158", "descricao": "DIVISAO DIREITA GR 6 PTS ARIES 2021 1730X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6218) |COR:AMENDOA CLEAN"},
-    {"ordem": "101440", "lote": "1108262", "qtde": 10.0, "item": "75159", "descricao": "DIVISAO ESQUERDA GR 6 PTS ARIES 2021 1730X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6226) |COR:AMENDOA CLEAN"},
-    {"ordem": "103337", "lote": "1108262", "qtde": 15.0, "item": "75217", "descricao": "PORTA GR 6 PTS ARIES 2021 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6269) |COR:AMENDOA CLEAN"},
-    {"ordem": "103338", "lote": "1108262", "qtde": 15.0, "item": "75217", "descricao": "PORTA GR 6 PTS ARIES 2021 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6269) |COR:AMENDOA CLEAN"},
-    {"ordem": "103340", "lote": "1108262", "qtde": 10.0, "item": "75218", "descricao": "PORTA GR 6 PTS ARIES ESPELHO 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6277) |COR:AMENDOA CLEAN"},
-    {"ordem": "103341", "lote": "1108262", "qtde": 10.0, "item": "75218", "descricao": "PORTA GR 6 PTS ARIES ESPELHO 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6277) |COR:AMENDOA CLEAN"},
-    {"ordem": "105670", "lote": "1108262", "qtde": 5.0, "item": "75845", "descricao": "FRENTE GAVETA SUP GR 6 PTS LOOP 2024 785X168X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52088) |COR:AMENDOA CLEAN"},
-    {"ordem": "105673", "lote": "1108262", "qtde": 20.0, "item": "75847", "descricao": "FRENTE GAVETA INF GR 6 PTS LOOP 2024 785X168X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52096) |COR:AMENDOA CLEAN"},
-    {"ordem": "108361", "lote": "1108262", "qtde": 10.0, "item": "75143", "descricao": "TAMPO DAS GAVETAS GR 6 PTS ARIES 2021 789X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6200) |COR:AMENDOA CLEAN"},
-    {"ordem": "108362", "lote": "1108262", "qtde": 10.0, "item": "75135", "descricao": "TAMPO INFERIOR GR 6 PTS ARIES 2021 2370X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6188) |COR:AMENDOA CLEAN"},
-    {"ordem": "108363", "lote": "1108262", "qtde": 10.0, "item": "75204", "descricao": "PRATELEIRA MOVEL GR 6 PTS ARIES 2021 789X400X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6250) |COR:AMENDOA CLEAN"},
-    {"ordem": "108364", "lote": "1108262", "qtde": 10.0, "item": "75110", "descricao": "LATERAL DIREITA GR 6 PTS ARIES 2021 2250X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6161) |COR:AMENDOA CLEAN"},
-    {"ordem": "108365", "lote": "1108262", "qtde": 10.0, "item": "75119", "descricao": "LATERAL ESQUERDA GR 6 PTS ARIES 2021 2250X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6170) |COR:AMENDOA CLEAN"},
-    {"ordem": "108366", "lote": "1108262", "qtde": 10.0, "item": "75129", "descricao": "CHAPEU GR 6 PTS ARIES 2021 2370X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6196) |COR:AMENDOA CLEAN"},
-    {"ordem": "108367", "lote": "1108262", "qtde": 10.0, "item": "75196", "descricao": "PRATELEIRA DAS GAVETAS GR 6 PTS ARIES 2021 789X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6234) |COR:AMENDOA CLEAN"},
-    {"ordem": "108368", "lote": "1108262", "qtde": 10.0, "item": "75200", "descricao": "PRATELEIRA SUPERIOR GR 6 PTS ARIES 2021 789X400X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6242) |COR:AMENDOA CLEAN"},
-    {"ordem": "109848", "lote": "1108272", "qtde": 10.0, "item": "76657", "descricao": "LATERAL DE GAVETA GR 6 PTS LOOP 2024 385X120X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52070) |COR:AMENDOA CLEAN"},
-    {"ordem": "109849", "lote": "1108272", "qtde": 10.0, "item": "76657", "descricao": "LATERAL DE GAVETA GR 6 PTS LOOP 2024 385X120X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52070) |COR:AMENDOA CLEAN"},
-    {"ordem": "109850", "lote": "1108272", "qtde": 10.0, "item": "76657", "descricao": "LATERAL DE GAVETA GR 6 PTS LOOP 2024 385X120X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52070) |COR:AMENDOA CLEAN"},
-    {"ordem": "109851", "lote": "1108272", "qtde": 10.0, "item": "76657", "descricao": "LATERAL DE GAVETA GR 6 PTS LOOP 2024 385X120X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52070) |COR:AMENDOA CLEAN"},
-    {"ordem": "110344", "lote": "1108272", "qtde": 10.0, "item": "76658", "descricao": "TRASEIRO GAVETA GR 6 PTS LOOP 2024 711X100X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52079) |COR:AMENDOA CLEAN"},
-    {"ordem": "110345", "lote": "1108272", "qtde": 10.0, "item": "76658", "descricao": "TRASEIRO GAVETA GR 6 PTS LOOP 2024 711X100X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52079) |COR:AMENDOA CLEAN"},
-    {"ordem": "110346", "lote": "1108272", "qtde": 10.0, "item": "76658", "descricao": "TRASEIRO GAVETA GR 6 PTS LOOP 2024 711X100X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52079) |COR:AMENDOA CLEAN"},
-    {"ordem": "110347", "lote": "1108272", "qtde": 10.0, "item": "76658", "descricao": "TRASEIRO GAVETA GR 6 PTS LOOP 2024 711X100X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52079) |COR:AMENDOA CLEAN"},
-    {"ordem": "110660", "lote": "1108272", "qtde": 10.0, "item": "76659", "descricao": "FUNDO DE GAVETA GR 6 PTS LOOP 2024 737X387X2,7 HDF", "unidade": "GUARDA-ROUPA", "mascara": "(8123) |COR:AMENDOA CLEAN"},
-    {"ordem": "110661", "lote": "1108272", "qtde": 10.0, "item": "76659", "descricao": "FUNDO DE GAVETA GR 6 PTS LOOP 2024 737X387X2,7 HDF", "unidade": "GUARDA-ROUPA", "mascara": "(8123) |COR:AMENDOA CLEAN"},
-    {"ordem": "110662", "lote": "1108272", "qtde": 10.0, "item": "76659", "descricao": "FUNDO DE GAVETA GR 6 PTS LOOP 2024 737X387X2,7 HDF", "unidade": "GUARDA-ROUPA", "mascara": "(8123) |COR:AMENDOA CLEAN"},
-    {"ordem": "110663", "lote": "1108272", "qtde": 10.0, "item": "76659", "descricao": "FUNDO DE GAVETA GR 6 PTS LOOP 2024 737X387X2,7 HDF", "unidade": "GUARDA-ROUPA", "mascara": "(8123) |COR:AMENDOA CLEAN"},
-    {"ordem": "113854", "lote": "1108272", "qtde": 10.0, "item": "76656", "descricao": "CALCO DO CABIDEIRO GR 6 PTS LOOP 2024 789X60X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52052) |COR:AMENDOA CLEAN"},
-    {"ordem": "93134", "lote": "1108264", "qtde": 20.0, "item": "75841", "descricao": "APLIQUE GR 6 PTS LOOP 2024 2324X60X4 MDF", "unidade": "GUARDA-ROUPA", "mascara": "(49111) |COR:IPPE"},
-    {"ordem": "98837", "lote": "1108264", "qtde": 10.0, "item": "75124", "descricao": "RODAPE TRASEIRO GR 6 PTS ARIES 2370X70X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": ""},
-    {"ordem": "101111", "lote": "1108264", "qtde": 5.0, "item": "75851", "descricao": "MOLDURA LAT INT COLADA  GR  6 PTS LOOP 2024 2230X55X40 MDF COL", "unidade": "GUARDA-ROUPA", "mascara": "(52061) |COR:BRANCO"},
-    {"ordem": "101411", "lote": "1108264", "qtde": 10.0, "item": "75836", "descricao": "COSTAS GR 6 PTS LOOP 2260X915X2,7 HDF", "unidade": "GUARDA-ROUPA", "mascara": "(8122) |COR:IPPE"},
-    {"ordem": "101432", "lote": "1108264", "qtde": 10.0, "item": "75157", "descricao": "DIVISAO DIREITA GR 6 PTS ARIES 2021 1730X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6137) |COR:IPPE"},
-    {"ordem": "101439", "lote": "1108264", "qtde": 10.0, "item": "75157", "descricao": "DIVISAO DIREITA GR 6 PTS ARIES 2021 1730X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6137) |COR:IPPE"},
-    {"ordem": "103335", "lote": "1108264", "qtde": 15.0, "item": "75215", "descricao": "PORTA GR 6 PTS ARIES 2021 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6153) |COR:IPPE"},
-    {"ordem": "103336", "lote": "1108264", "qtde": 15.0, "item": "75215", "descricao": "PORTA GR 6 PTS ARIES 2021 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6153) |COR:IPPE"},
-    {"ordem": "103338", "lote": "1108264", "qtde": 10.0, "item": "75216", "descricao": "PORTA GR 6 PTS ARIES ESPELHO 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6145) |COR:IPPE"},
-    {"ordem": "103339", "lote": "1108264", "qtde": 10.0, "item": "75216", "descricao": "PORTA GR 6 PTS ARIES ESPELHO 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6145) |COR:IPPE"},
-    {"ordem": "105669", "lote": "1108264", "qtde": 5.0, "item": "75844", "descricao": "FRENTE GAVETA SUP GR 6 PTS LOOP 2024 785X168X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(49113) |COR:IPPE"},
-    {"ordem": "105672", "lote": "1108264", "qtde": 20.0, "item": "75846", "descricao": "FRENTE GAVETA INF GR 6 PTS LOOP 2024 785X168X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(49112) |COR:IPPE"},
-    {"ordem": "108355", "lote": "1108264", "qtde": 10.0, "item": "75142", "descricao": "TAMPO DAS GAVETAS GR 6 PTS ARIES 2021 789X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6110) |COR:IPPE"},
-    {"ordem": "108356", "lote": "1108264", "qtde": 10.0, "item": "75134", "descricao": "TAMPO INFERIOR GR 6 PTS ARIES 2021 2370X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6097) |COR:IPPE"},
-    {"ordem": "108357", "lote": "1108264", "qtde": 10.0, "item": "75203", "descricao": "PRATELEIRA MOVEL GR 6 PTS ARIES 2021 789X400X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6129) |COR:IPPE"},
-    {"ordem": "108358", "lote": "1108264", "qtde": 10.0, "item": "75109", "descricao": "LATERAL DIREITA GR 6 PTS ARIES 2021 2250X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6070) |COR:IPPE"},
-    {"ordem": "108359", "lote": "1108264", "qtde": 10.0, "item": "75118", "descricao": "LATERAL ESQUERDA GR 6 PTS ARIES 2021 2250X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6089) |COR:IPPE"},
-    {"ordem": "108360", "lote": "1108264", "qtde": 10.0, "item": "75128", "descricao": "CHAPEU GR 6 PTS ARIES 2021 2370X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6105) |COR:IPPE"},
-    {"ordem": "108361", "lote": "1108264", "qtde": 10.0, "item": "75195", "descricao": "PRATELEIRA DAS GAVETAS GR 6 PTS ARIES 2021 789X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6121) |COR:IPPE"},
-    {"ordem": "108362", "lote": "1108264", "qtde": 10.0, "item": "75199", "descricao": "PRATELEIRA SUPERIOR GR 6 PTS ARIES 2021 789X400X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(6125) |COR:IPPE"},
-    {"ordem": "109844", "lote": "1108273", "qtde": 10.0, "item": "76654", "descricao": "LATERAL DE GAVETA GR 6 PTS LOOP 2024 385X120X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(49114) |COR:IPPE"},
-    {"ordem": "109845", "lote": "1108273", "qtde": 10.0, "item": "76654", "descricao": "LATERAL DE GAVETA GR 6 PTS LOOP 2024 385X120X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(49114) |COR:IPPE"},
-    {"ordem": "109846", "lote": "1108273", "qtde": 10.0, "item": "76654", "descricao": "LATERAL DE GAVETA GR 6 PTS LOOP 2024 385X120X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(49114) |COR:IPPE"},
-    {"ordem": "109847", "lote": "1108273", "qtde": 10.0, "item": "76654", "descricao": "LATERAL DE GAVETA GR 6 PTS LOOP 2024 385X120X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(49114) |COR:IPPE"},
-    {"ordem": "110340", "lote": "1108273", "qtde": 10.0, "item": "76655", "descricao": "TRASEIRO GAVETA GR 6 PTS LOOP 2024 711X100X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(49115) |COR:IPPE"},
-    {"ordem": "110341", "lote": "1108273", "qtde": 10.0, "item": "76655", "descricao": "TRASEIRO GAVETA GR 6 PTS LOOP 2024 711X100X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(49115) |COR:IPPE"},
-    {"ordem": "110342", "lote": "1108273", "qtde": 10.0, "item": "76655", "descricao": "TRASEIRO GAVETA GR 6 PTS LOOP 2024 711X100X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(49115) |COR:IPPE"},
-    {"ordem": "110343", "lote": "1108273", "qtde": 10.0, "item": "76655", "descricao": "TRASEIRO GAVETA GR 6 PTS LOOP 2024 711X100X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(49115) |COR:IPPE"},
-    {"ordem": "110656", "lote": "1108273", "qtde": 10.0, "item": "76653", "descricao": "FUNDO DE GAVETA GR 6 PTS LOOP 2024 737X387X2,7 HDF", "unidade": "GUARDA-ROUPA", "mascara": "(8122) |COR:IPPE"},
-    {"ordem": "110657", "lote": "1108273", "qtde": 10.0, "item": "76653", "descricao": "FUNDO DE GAVETA GR 6 PTS LOOP 2024 737X387X2,7 HDF", "unidade": "GUARDA-ROUPA", "mascara": "(8122) |COR:IPPE"},
-    {"ordem": "110658", "lote": "1108273", "qtde": 10.0, "item": "76653", "descricao": "FUNDO DE GAVETA GR 6 PTS LOOP 2024 737X387X2,7 HDF", "unidade": "GUARDA-ROUPA", "mascara": "(8122) |COR:IPPE"},
-    {"ordem": "110659", "lote": "1108273", "qtde": 10.0, "item": "76653", "descricao": "FUNDO DE GAVETA GR 6 PTS LOOP 2024 737X387X2,7 HDF", "unidade": "GUARDA-ROUPA", "mascara": "(8122) |COR:IPPE"},
-    {"ordem": "113853", "lote": "1108273", "qtde": 10.0, "item": "76652", "descricao": "CALCO DO CABIDEIRO GR 6 PTS LOOP 2024 789X60X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(49116) |COR:IPPE"},
-    {"ordem": "93132", "lote": "1108258", "qtde": 20.0, "item": "75839", "descricao": "APLIQUE GR 6 PTS LOOP 2024 2324X60X4 MDF", "unidade": "GUARDA-ROUPA", "mascara": "(52101) |COR:FREIJO"},
-    {"ordem": "98835", "lote": "1108258", "qtde": 10.0, "item": "75122", "descricao": "RODAPE TRASEIRO GR 6 PTS ARIES 2370X70X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": ""},
-    {"ordem": "101109", "lote": "1108258", "qtde": 5.0, "item": "75851", "descricao": "MOLDURA LAT INT COLADA  GR  6 PTS LOOP 2024 2230X55X40 MDF COL", "unidade": "GUARDA-ROUPA", "mascara": "(52061) |COR:BRANCO"},
-    {"ordem": "101409", "lote": "1108258", "qtde": 10.0, "item": "75836", "descricao": "COSTAS GR 6 PTS LOOP 2260X915X2,7 HDF", "unidade": "GUARDA-ROUPA", "mascara": "(8120) |COR:FREIJO"},
-    {"ordem": "101427", "lote": "1108258", "qtde": 10.0, "item": "75155", "descricao": "DIVISAO DIREITA GR 6 PTS ARIES 2021 1730X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(612) |COR:FREIJO"},
-    {"ordem": "101437", "lote": "1108258", "qtde": 10.0, "item": "75155", "descricao": "DIVISAO DIREITA GR 6 PTS ARIES 2021 1730X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(612) |COR:FREIJO"},
-    {"ordem": "103331", "lote": "1108258", "qtde": 15.0, "item": "75211", "descricao": "PORTA GR 6 PTS ARIES 2021 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(628) |COR:FREIJO"},
-    {"ordem": "103332", "lote": "1108258", "qtde": 15.0, "item": "75211", "descricao": "PORTA GR 6 PTS ARIES 2021 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(628) |COR:FREIJO"},
-    {"ordem": "103335", "lote": "1108258", "qtde": 10.0, "item": "75212", "descricao": "PORTA GR 6 PTS ARIES ESPELHO 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(636) |COR:FREIJO"},
-    {"ordem": "103336", "lote": "1108258", "qtde": 10.0, "item": "75212", "descricao": "PORTA GR 6 PTS ARIES ESPELHO 2165X392X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(636) |COR:FREIJO"},
-    {"ordem": "105667", "lote": "1108258", "qtde": 5.0, "item": "75842", "descricao": "FRENTE GAVETA SUP GR 6 PTS LOOP 2024 785X168X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52086) |COR:FREIJO"},
-    {"ordem": "105669", "lote": "1108258", "qtde": 20.0, "item": "75844", "descricao": "FRENTE GAVETA INF GR 6 PTS LOOP 2024 785X168X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(52094) |COR:FREIJO"},
-    {"ordem": "108343", "lote": "1108258", "qtde": 10.0, "item": "75140", "descricao": "TAMPO DAS GAVETAS GR 6 PTS ARIES 2021 789X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(596) |COR:FREIJO"},
-    {"ordem": "108344", "lote": "1108258", "qtde": 10.0, "item": "75132", "descricao": "TAMPO INFERIOR GR 6 PTS ARIES 2021 2370X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(584) |COR:FREIJO"},
-    {"ordem": "108345", "lote": "1108258", "qtde": 10.0, "item": "75201", "descricao": "PRATELEIRA MOVEL GR 6 PTS ARIES 2021 789X400X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(620) |COR:FREIJO"},
-    {"ordem": "108346", "lote": "1108258", "qtde": 10.0, "item": "75107", "descricao": "LATERAL DIREITA GR 6 PTS ARIES 2021 2250X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(557) |COR:FREIJO"},
-    {"ordem": "108347", "lote": "1108258", "qtde": 10.0, "item": "75116", "descricao": "LATERAL ESQUERDA GR 6 PTS ARIES 2021 2250X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(565) |COR:FREIJO"},
-    {"ordem": "108348", "lote": "1108258", "qtde": 10.0, "item": "75126", "descricao": "CHAPEU GR 6 PTS ARIES 2021 2370X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(592) |COR:FREIJO"},
-    {"ordem": "108349", "lote": "1108258", "qtde": 10.0, "item": "75193", "descricao": "PRATELEIRA DAS GAVETAS GR 6 PTS ARIES 2021 789X500X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(604) |COR:FREIJO"},
-    {"ordem": "108350", "lote": "1108258", "qtde": 10.0, "item": "75197", "descricao": "PRATELEIRA SUPERIOR GR 6 PTS ARIES 2021 789X400X15 MDP", "unidade": "GUARDA-ROUPA", "mascara": "(612) |COR:FREIJO"},
-    {"ordem": "109836", "lote": "1108267", "qtde": 10.0}
-  ];
-
-  let dados = JSON.parse(localStorage.getItem("prodControlDados")) || [];
-  let lixeira = JSON.parse(localStorage.getItem("prodControlLixeira")) || [];
-  let indiceEdicao = null;
-  let chartBarras = null;
-  let chartPizza = null;
-
-  // Função auxiliar para formatar a data de AAAA-MM-DD para DD/MM/AAAA
-  function formatarDataBR(dataStr) {
-    if (!dataStr) return "";
-    const partes = dataStr.split("-");
-    if (partes.length === 3) {
-      return `${partes[2]}/${partes[1]}/${partes[0]}`;
-    }
-    return dataStr;
+  /* ======================= UTILITÁRIOS DE SEGURANÇA ======================= */
+  // Evita XSS: qualquer texto vindo do usuário passa por aqui antes de virar HTML.
+  function escapeHTML(valor) {
+    const div = document.createElement("div");
+    div.textContent = String(valor ?? "");
+    return div.innerHTML;
   }
 
-  document.getElementById("ordem").addEventListener("input", function() {
-    const valorOrdem = this.value.trim();
-    if (valorOrdem === "") return;
+  function normalizarCodigoEmpresa(texto) {
+    return String(texto || "")
+      .trim()
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9-]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+  }
 
-    const encontrado = bancoOrdens.find(o => o.ordem === valorOrdem);
-    if (encontrado) {
-      if (encontrado.lote) document.getElementById("lote").value = encontrado.lote;
-      if (encontrado.unidade) document.getElementById("unidade").value = encontrado.unidade;
-      if (encontrado.qtde) document.getElementById("qtdOrdem").value = encontrado.qtde;
-      if (encontrado.item) document.getElementById("item").value = encontrado.item;
-      if (encontrado.descricao) document.getElementById("descricao").value = encontrado.descricao;
-      if (encontrado.mascara) document.getElementById("mascara").value = encontrado.mascara;
-      
-      mostrarToast("💡 Dados da ordem autopreenchidos!");
-    }
-  });
+  /* ======================= ESTADO LOCAL (cache do Firestore em tempo real) ======================= */
+  let dados = [];      // lançamentos ativos (arquivado === false)
+  let lixeira = [];     // lançamentos na lixeira (arquivado === true)
+  let indexEditando = null; // id do doc do Firestore sendo editado, ou null
+  let empresaId = null;
+  let papelUsuario = "operador"; // 'operador' ou 'coordenador'
+  let unsubscribeLancamentos = null;
+  let graficoTipos = null;
+  let graficoPizza = null;
 
-  document.getElementById("btn-entrar-sistema").addEventListener("click", () => {
-    const email = document.getElementById("email-login").value;
-    const senha = document.getElementById("senha-login").value;
-    const msgErro = document.getElementById("msg-erro");
-    msgErro.innerText = "";
+  /* ======================= NAVEGAÇÃO ENTRE TELAS ======================= */
+  function mostrarTela(tela) {
+    document.getElementById("secao-carregando").classList.toggle("hidden", tela !== "carregando");
+    document.getElementById("secao-login").classList.toggle("hidden", tela !== "login");
+    document.getElementById("secao-app").classList.toggle("hidden", tela !== "app");
+    document.getElementById("btn-menu").classList.toggle("hidden", tela !== "app");
+  }
 
-    signInWithEmailAndPassword(auth, email, senha)
-      .catch((error) => { msgErro.innerText = "Erro ao entrar: " + error.message; });
-  });
+  /* ======================= AUTENTICAÇÃO ======================= */
+  const btnMostrarCadastro = document.getElementById("btn-mostrar-cadastro");
+  const btnCadastrar = document.getElementById("btn-cadastrar-novo");
+  const campoEmpresaWrapper = document.getElementById("campo-empresa");
+  let modoCadastro = false;
 
-  document.getElementById("btn-cadastrar-novo").addEventListener("click", () => {
-    const email = document.getElementById("email-login").value;
-    const senha = document.getElementById("senha-login").value;
-    const msgErro = document.getElementById("msg-erro");
-    msgErro.innerText = "";
+  btnMostrarCadastro.onclick = () => {
+    modoCadastro = !modoCadastro;
+    btnCadastrar.classList.toggle("hidden", !modoCadastro);
+    document.getElementById("btn-entrar-sistema").classList.toggle("hidden", modoCadastro);
+    campoEmpresaWrapper.classList.toggle("hidden", !modoCadastro);
+    btnMostrarCadastro.innerText = modoCadastro ? "Já tenho conta? Entrar" : "Ainda não tem conta? Criar conta";
+    document.getElementById("msg-erro").innerText = "";
+  };
 
-    createUserWithEmailAndPassword(auth, email, senha)
-      .catch((error) => { msgErro.innerText = "Erro ao cadastrar: " + error.message; });
-  });
+  let emProcessoDeCadastro = false;
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
+    if (emProcessoDeCadastro) return; // o próprio fluxo de cadastro cuida de entrar no app
+    if (unsubscribeLancamentos) { unsubscribeLancamentos(); unsubscribeLancamentos = null; }
+
     if (user) {
-      document.getElementById("secao-login").classList.add("hidden");
-      document.getElementById("secao-app").classList.remove("hidden");
-      document.getElementById("btn-menu").classList.remove("hidden");
-      atualizarInterface();
-    } else {
-      document.getElementById("secao-login").classList.remove("hidden");
-      document.getElementById("secao-app").classList.add("hidden");
-      document.getElementById("btn-menu").classList.add("hidden");
-    }
-  });
+      mostrarTela("carregando");
+      try {
+        const perfilRef = doc(db, "usuarios", user.uid);
+        const perfilSnap = await getDoc(perfilRef);
+        if (!perfilSnap.exists()) {
+          mostrarToast("Perfil não encontrado. Faça login novamente.", "#ef4444");
+          await signOut(auth);
+          return;
+        }
+        empresaId = perfilSnap.data().empresaId;
+        papelUsuario = perfilSnap.data().papel === "coordenador" ? "coordenador" : "operador";
+        const empresaSnap = await getDoc(doc(db, "empresas", empresaId));
+        document.getElementById("menu-empresa-nome").innerText = empresaSnap.exists()
+          ? "Empresa: " + empresaSnap.data().nome
+          : "";
 
-  document.getElementById("menu-sair").addEventListener("click", (e) => {
-    e.preventDefault();
-    fecharMenu();
-    signOut(auth);
-  });
-
-  document.getElementById("btn-menu").addEventListener("click", () => {
-    document.getElementById("mySidebar").style.width = "250px";
-  });
-
-  document.getElementById("btn-fechar-menu").addEventListener("click", fecharMenu);
-  document.getElementById("menu-inicio").addEventListener("click", (e) => {
-    e.preventDefault();
-    fecharMenu();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-
-  function fecharMenu() {
-    document.getElementById("mySidebar").style.width = "0";
-  }
-
-  document.getElementById("btn-registrar").addEventListener("click", registrarLance);
-  document.getElementById("busca").addEventListener("input", renderizarLista);
-  document.getElementById("btn-limpar-sel").addEventListener("click", desmarcarTodos);
-  document.getElementById("btn-excluir-sel").addEventListener("click", excluirSelecionados);
-  document.getElementById("btn-enviar-sel").addEventListener("click", () => enviarWhatsApp(true));
-  document.getElementById("btn-enviar-tudo").addEventListener("click", () => enviarWhatsApp(false));
-  document.getElementById("btn-compartilhar-tudo").addEventListener("click", compartilharResumoGeral);
-  document.getElementById("btn-esvaziar-lixeira").addEventListener("click", esvaziarLixeira);
-
-  function salvarStorage() {
-    localStorage.setItem("prodControlDados", JSON.stringify(dados));
-    localStorage.setItem("prodControlLixeira", JSON.stringify(lixeira));
-  }
-
-  function registrarLance() {
-    const dataVal = document.getElementById("data").value;
-    const unidadeVal = document.getElementById("unidade").value;
-    const loteVal = document.getElementById("lote").value;
-    const ordemVal = document.getElementById("ordem").value;
-    const qtdOrdemVal = document.getElementById("qtdOrdem").value;
-    const itemVal = document.getElementById("item").value;
-    const descricaoVal = document.getElementById("descricao").value;
-    const mascaraVal = document.getElementById("mascara").value;
-    const quantidadeVal = document.getElementById("quantidade").value;
-    const observacaoVal = document.getElementById("observacao").value;
-    const tipoVal = document.getElementById("tipo").value;
-
-    if (!dataVal || !unidadeVal || !loteVal || !ordemVal || !quantidadeVal) {
-      mostrarToast("⚠️ Preencha os campos obrigatórios!", "#ef4444");
-      return;
-    }
-
-    const novoObjeto = {
-      data: dataVal,
-      unidade: unidadeVal,
-      lote: loteVal,
-      ordem: ordemVal,
-      qtdOrdem: qtdOrdemVal,
-      item: itemVal,
-      descricao: descricaoVal,
-      mascara: mascaraVal,
-      quantidade: parseFloat(quantidadeVal),
-      observacao: observacaoVal,
-      tipo: tipoVal,
-      selecionado: false
-    };
-
-    if (indiceEdicao !== null) {
-      dados[indiceEdicao] = novoObjeto;
-      indiceEdicao = null;
-      document.getElementById("btn-registrar").innerText = "REGISTRAR LANCE";
-      mostrarToast("✅ Lançamento atualizado com sucesso!");
-    } else {
-      dados.unshift(novoObjeto);
-      mostrarToast("✅ Lançamento registrado com sucesso!");
-    }
-
-    limparCamposFormulario();
-    salvarStorage();
-    atualizarInterface();
-  }
-
-  function limparCamposFormulario() {
-    document.getElementById("data").value = "";
-    document.getElementById("ordem").value = "";
-    document.getElementById("qtdOrdem").value = "";
-    document.getElementById("item").value = "";
-    document.getElementById("descricao").value = "";
-    document.getElementById("mascara").value = "";
-    document.getElementById("quantidade").value = "";
-    document.getElementById("observacao").value = "";
-  }
-
-  function renderizarLista() {
-    const ul = document.getElementById("lista");
-    const filtro = document.getElementById("busca").value.toLowerCase();
-    ul.innerHTML = "";
-
-    dados.forEach((item, index) => {
-      const matchLote = item.lote.toLowerCase().includes(filtro);
-      const matchOrdem = item.ordem.toLowerCase().includes(filtro);
-      const matchMascara = item.mascara.toLowerCase().includes(filtro);
-
-      if (matchLote || matchOrdem || matchMascara) {
-        const li = document.createElement("li");
-        
-        let classeTipo = "tipo-volume";
-        if(item.tipo === "PEÇA") classeTipo = "tipo-peca";
-        if(item.tipo === "SOBRA") classeTipo = "tipo-sobra";
-        if(item.tipo === "RETRABALHO - PINTURA") classeTipo = "tipo-retrabalho-pintura";
-        if(item.tipo === "RETRABALHO - FILETAÇÃO") classeTipo = "tipo-retrabalho-filetacao";
-        if(item.tipo === "REFUGO") classeTipo = "tipo-refugo";
-
-        li.className = classeTipo;
-
-        const dataFormatada = formatarDataBR(item.data);
-
-        li.innerHTML = `
-          <input type="checkbox" class="chk-item" ${item.selecionado ? "checked" : ""} data-index="${index}">
-          <div class="info-item">
-            <span class="titulo-lote">${item.lote} - ${item.tipo}</span><br>
-            📅 Data: ${dataFormatada}<br>
-            🏢 Unidade: ${item.unidade}<br>
-            🔢 Ordem: ${item.ordem} (Qtd: ${item.qtdOrdem || '-' - 0})<br>
-            📦 Item: ${item.item || '-'}<br>
-            📝 Desc: ${item.descricao || '-'}<br>
-            🎭 Máscara: ${item.mascara || '-'}<br>
-            📊 Qtd Lance: ${item.quantidade}${item.observacao ? `<br>💬 Obs: ${item.observacao}` : ''}
-          </div>
-          <div class="acoes-item">
-            <button class="edit-btn" data-index="${index}">✏️</button>
-            <button class="delete-btn" data-index="${index}">🗑️</button>
-          </div>
-        `;
-        ul.appendChild(li);
+        aplicarPermissoesUI();
+        escutarLancamentos();
+        mostrarTela("app");
+      } catch (erro) {
+        console.error(erro);
+        mostrarToast("Erro ao carregar dados da conta.", "#ef4444");
+        mostrarTela("login");
       }
-    });
+    } else {
+      empresaId = null;
+      dados = []; lixeira = [];
+      mostrarTela("login");
+    }
+  });
 
-    document.querySelectorAll(".chk-item").forEach(chk => {
-      chk.addEventListener("change", (e) => {
-        const idx = e.target.getAttribute("data-index");
-        dados[idx].selecionado = e.target.checked;
-        salvarStorage();
-      });
-    });
+  async function autenticar() {
+    const email = document.getElementById("email-login").value.trim();
+    const senha = document.getElementById("senha-login").value;
+    const msgErro = document.getElementById("msg-erro");
+    msgErro.innerText = "";
+    if (!email || !senha) { msgErro.innerText = "Preencha e-mail e senha."; return; }
 
-    document.querySelectorAll(".edit-btn").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        const idx = e.target.getAttribute("data-index");
-        carregarParaEdicao(idx);
-      });
-    });
+    if (modoCadastro) {
+      const codigoDigitado = document.getElementById("codigo-empresa").value;
+      const codigo = normalizarCodigoEmpresa(codigoDigitado);
+      if (senha.length < 6) { msgErro.innerText = "A senha precisa ter pelo menos 6 caracteres."; return; }
+      if (!codigo) { msgErro.innerText = "Informe o código da empresa."; return; }
 
-    document.querySelectorAll(".delete-btn").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        const idx = e.target.getAttribute("data-index");
-        moverParaLixeira(idx);
-      });
-    });
+      const papelEscolhido = document.getElementById("papel-cadastro").value === "coordenador"
+        ? "coordenador" : "operador";
 
-    renderizarLixeira();
+      emProcessoDeCadastro = true;
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, senha);
+
+        const empresaRef = doc(db, "empresas", codigo);
+        const empresaSnap = await getDoc(empresaRef);
+        if (!empresaSnap.exists()) {
+          await setDoc(empresaRef, { nome: codigoDigitado.trim(), criadoEm: serverTimestamp() });
+        }
+
+        await setDoc(doc(db, "usuarios", cred.user.uid), {
+          email,
+          empresaId: codigo,
+          papel: papelEscolhido,
+          criadoEm: serverTimestamp()
+        });
+
+        // Como o listener global ficou pausado durante o cadastro, entramos no app manualmente aqui.
+        empresaId = codigo;
+        papelUsuario = papelEscolhido;
+        document.getElementById("menu-empresa-nome").innerText = "Empresa: " + codigoDigitado.trim();
+        aplicarPermissoesUI();
+        escutarLancamentos();
+        mostrarTela("app");
+        mostrarToast("Conta criada com sucesso!", "#22c55e");
+      } catch (erro) {
+        console.error(erro);
+        msgErro.innerText = traduzirErroFirebase(erro.code);
+      } finally {
+        emProcessoDeCadastro = false;
+      }
+    } else {
+      try {
+        await signInWithEmailAndPassword(auth, email, senha);
+      } catch (erro) {
+        console.error(erro);
+        msgErro.innerText = traduzirErroFirebase(erro.code);
+      }
+    }
   }
 
-  function renderizarLixeira() {
-    const ulLixeira = document.getElementById("listaLixeira");
-    ulLixeira.innerHTML = "";
+  document.getElementById("btn-entrar-sistema").onclick = autenticar;
+  document.getElementById("btn-cadastrar-novo").onclick = autenticar;
 
-    lixeira.forEach((item, index) => {
-      const li = document.createElement("li");
-      li.style.background = "#334155";
-      li.style.borderColor = "#94a3b8";
-      const dataFormatada = formatarDataBR(item.data);
-      li.innerHTML = `
-        <div class="info-item">
-          <b>Lote: ${item.lote}</b> - ${item.tipo} (${item.quantidade}x)<br>
-          <small>Ordem: ${item.ordem} - Data: ${dataFormatada}</small>
-        </div>
-        <button class="edit-btn" style="background:#22c55e;" data-lixeira-index="${index}">♻️</button>
-      `;
-      ulLixeira.appendChild(li);
-    });
-
-    document.querySelectorAll("[data-lixeira-index]").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        const idx = e.target.getAttribute("data-lixeira-index");
-        restaurarDaLixeira(idx);
-      });
-    });
+  function traduzirErroFirebase(codigo) {
+    const mapa = {
+      "auth/invalid-email": "E-mail inválido.",
+      "auth/user-not-found": "Usuário não encontrado.",
+      "auth/wrong-password": "Senha incorreta.",
+      "auth/invalid-credential": "E-mail ou senha incorretos.",
+      "auth/email-already-in-use": "Este e-mail já está cadastrado.",
+      "auth/weak-password": "Senha muito fraca (mín. 6 caracteres)."
+    };
+    return mapa[codigo] || "Não foi possível concluir. Tente novamente.";
   }
 
-  function carregarParaEdicao(index) {
-    const item = dados[index];
-    document.getElementById("data").value = item.data;
-    document.getElementById("unidade").value = item.unidade;
-    document.getElementById("lote").value = item.lote;
-    document.getElementById("ordem").value = item.ordem;
-    document.getElementById("qtdOrdem").value = item.qtdOrdem || "";
-    document.getElementById("item").value = item.item || "";
-    document.getElementById("descricao").value = item.descricao || "";
-    document.getElementById("mascara").value = item.mascara || "";
-    document.getElementById("quantidade").value = item.quantidade;
-    document.getElementById("observacao").value = item.observacao || "";
-    document.getElementById("tipo").value = item.tipo;
-
-    indiceEdicao = index;
-    document.getElementById("btn-registrar").innerText = "ATUALIZAR LANCE";
-    window.scrollTo({ top: 300, behavior: 'smooth' });
+  /* ======================= PERMISSÕES POR PAPEL ======================= */
+  // Só coordenadores de PCP podem excluir lançamentos, restaurar ou esvaziar a lixeira.
+  // Isso é reforçado também no servidor (firestore.rules) — esconder na tela é só conveniência.
+  function aplicarPermissoesUI() {
+    const ehCoordenador = papelUsuario === "coordenador";
+    document.getElementById("btn-excluir-sel").classList.toggle("hidden", !ehCoordenador);
+    document.getElementById("btn-esvaziar-lixeira").classList.toggle("hidden", !ehCoordenador);
+    document.getElementById("card-lixeira").classList.toggle("hidden", !ehCoordenador);
   }
 
-  function moverParaLixeira(index) {
-    const removido = dados.splice(index, 1)[0];
-    lixeira.unshift(removido);
-    salvarStorage();
-    atualizarInterface();
-    mostrarToast("🗑️ Item movido para a lixeira!");
+  /* ======================= MENU LATERAL ======================= */
+  const openNav = () => document.getElementById("mySidebar").style.width = "250px";
+  const closeNav = () => document.getElementById("mySidebar").style.width = "0";
+
+  document.getElementById("btn-menu").onclick = openNav;
+  document.getElementById("btn-fechar-menu").onclick = closeNav;
+  document.getElementById("menu-inicio").onclick = closeNav;
+  document.getElementById("menu-sair").onclick = () => signOut(auth).then(closeNav);
+
+  /* ======================= BUSCA AUTOMÁTICA DA ORDEM (AO VIVO NO FIRESTORE) ======================= */
+  // Nunca fica com dado "congelado": busca sempre a ordem mais recente importada
+  // pelo Cron Job, usando o número da Ordem como chave (é sempre único).
+  let timerBuscaOrdem = null;
+  document.getElementById("ordem").addEventListener("input", function () {
+    clearTimeout(timerBuscaOrdem);
+    const valorOrdem = this.value.trim();
+    if (!valorOrdem || !empresaId) return;
+
+    timerBuscaOrdem = setTimeout(async () => {
+      try {
+        const ref = doc(db, "empresas", empresaId, "ordens", valorOrdem);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          const o = snap.data();
+          if (o.lote) document.getElementById("lote").value = o.lote;
+          if (o.unidade) document.getElementById("unidade").value = o.unidade;
+          if (o.qtde !== undefined && o.qtde !== null) document.getElementById("qtdOrdem").value = o.qtde;
+          if (o.coditem) document.getElementById("item").value = o.coditem;
+          if (o.descricao) document.getElementById("descricao").value = o.descricao;
+          document.getElementById("mascara").value = o.mascara || "";
+          mostrarToast("💡 Dados da ordem autopreenchidos!", "#22c55e");
+        }
+      } catch (erro) {
+        console.error(erro);
+      }
+    }, 400); // espera a pessoa parar de digitar antes de consultar o banco
+  });
+
+  /* ======================= SELETOR DE COR DO LOTE ======================= */
+  document.querySelectorAll(".color-btn").forEach(btn => {
+    btn.onclick = () => {
+      const campoLote = document.getElementById("lote");
+      let valorAtual = campoLote.value.trim().replace(/[🔴⚫🔵🟡🟢🟤]/g, "").trim();
+      campoLote.value = valorAtual ? `${valorAtual} ${btn.dataset.cor}` : `${btn.dataset.cor} `;
+    };
+  });
+
+  /* ======================= HELPERS DE FORM ======================= */
+  function limparForm() {
+    ["data","unidade","lote","ordem","qtdOrdem","item","descricao","mascara","quantidade","observacao"]
+      .forEach(id => document.getElementById(id).value = "");
   }
 
-  function restaurarDaLixeira(index) {
-    const restaurado = lixeira.splice(index, 1)[0];
-    dados.unshift(restaurado);
-    salvarStorage();
-    atualizarInterface();
-    mostrarToast("♻️ Item restaurado com sucesso!");
+  function formatarDataBR(dataISO) {
+    if (!dataISO) return "__/__/____";
+    const [ano, mes, dia] = dataISO.split("-");
+    return `${dia}/${mes}/${ano}`;
   }
 
-  function esvaziarLixeira() {
-    if (lixeira.length === 0) return;
-    if (confirm("Deseja realmente apagar todos os itens da lixeira permanentemente?")) {
+  function mostrarToast(msg, cor) {
+    const t = document.getElementById("toast");
+    t.innerText = msg;
+    t.style.background = cor;
+    t.style.display = "block";
+    setTimeout(() => t.style.display = "none", 2500);
+  }
+
+  function descobrirTurnoPorHora() {
+    const hora = new Date().getHours();
+    if (hora >= 0 && hora < 12) return "Manhã";
+    if (hora >= 12 && hora < 18) return "Tarde";
+    return "Noite";
+  }
+
+  /* ======================= FIRESTORE: LEITURA EM TEMPO REAL ======================= */
+  function escutarLancamentos() {
+    const ref = collection(db, "empresas", empresaId, "lancamentos");
+    const q = query(ref, orderBy("criadoEm", "desc"));
+    unsubscribeLancamentos = onSnapshot(q, (snap) => {
+      dados = [];
       lixeira = [];
-      salvarStorage();
-      atualizarInterface();
-      mostrarToast("🗑️ Lixeira esvaziada!");
-    }
+      snap.forEach(docSnap => {
+        const item = { id: docSnap.id, ...docSnap.data() };
+        if (item.arquivado) lixeira.push(item); else dados.push(item);
+      });
+      renderizar();
+    }, (erro) => {
+      console.error(erro);
+      mostrarToast("Erro ao sincronizar dados. Verifique sua conexão.", "#ef4444");
+    });
   }
 
-  function desmarcarTodos() {
-    dados.forEach(i => i.selecionado = false);
-    salvarStorage();
-    renderizarLista();
-    mostrarToast("🔄 Seleção limpa!");
-  }
-
-  function excluirSelecionados() {
-    const marcados = dados.filter(i => i.selecionado);
-    if (marcados.length === 0) {
-      mostrarToast("⚠️ Nenhum item marcado para excluir!", "#ef4444");
-      return;
-    }
-
-    if (confirm(`Mover ${marcados.length} item(ns) para a lixeira?`)) {
-      lixeira = marcados.concat(lixeira);
-      dados = dados.filter(i => !i.selecionado);
-      salvarStorage();
-      atualizarInterface();
-      mostrarToast("🗑️ Itens movidos para a lixeira!");
-    }
-  }
-
-  function calcularTotais() {
-    const totais = {
-      VOLUME: 0,
-      PEÇA: 0,
-      SOBRA: 0,
-      "RETRABALHO - PINTURA": 0,
-      "RETRABALHO - FILETAÇÃO": 0,
-      REFUGO: 0
+  /* ======================= REGISTRAR / EDITAR ======================= */
+  async function registrar() {
+    const campos = {
+      data: document.getElementById("data").value,
+      unidade: document.getElementById("unidade").value,
+      lote: document.getElementById("lote").value.trim(),
+      ordem: document.getElementById("ordem").value,
+      qtdOrdem: document.getElementById("qtdOrdem").value,
+      item: document.getElementById("item").value,
+      descricao: document.getElementById("descricao").value.trim(),
+      mascara: document.getElementById("mascara").value.trim(),
+      quantidade: parseInt(document.getElementById("quantidade").value, 10),
+      observacao: document.getElementById("observacao").value.trim(),
+      tipo: document.getElementById("tipo").value
     };
 
-    dados.forEach(item => {
-      if (totais[item.tipo] !== undefined) {
-        totais[item.tipo] += item.quantidade;
-      }
-    });
-
-    document.getElementById("res-volume").innerText = `Vol: ${totais.VOLUME}`;
-    document.getElementById("res-peca").innerText = `Pç: ${totais.PEÇA}`;
-    document.getElementById("res-sobra").innerText = `Sob: ${totais.SOBRA}`;
-    document.getElementById("res-ret-pintura").innerText = `Ret. Pintura: ${totais["RETRABALHO - PINTURA"]}`;
-    document.getElementById("res-ret-filetacao").innerText = `Ret. Filetação: ${totais["RETRABALHO - FILETAÇÃO"]}`;
-    document.getElementById("res-refugo").innerText = `Ref: ${totais.REFUGO}`;
-
-    return totais;
-  }
-
-  function atualizarGraficos(totais) {
-    const labels = ["VOLUME", "PEÇA", "SOBRA", "RET. PINTURA", "RET. FILETAÇÃO", "REFUGO"];
-    const valores = [
-      totais.VOLUME,
-      totais.PEÇA,
-      totais.SOBRA,
-      totais["RETRABALHO - PINTURA"],
-      totais["RETRABALHO - FILETAÇÃO"],
-      totais.REFUGO
-    ];
-    const cores = ["#a855f7", "#3b82f6", "#22c55e", "#f59e0b", "#d97706", "#ef4444"];
-
-    if (chartBarras) chartBarras.destroy();
-    if (chartPizza) chartPizza.destroy();
-
-    const ctxBarras = document.getElementById("graficoBarras").getContext("2d");
-    chartBarras = new Chart(ctxBarras, {
-      type: "bar",
-      data: {
-        labels: labels,
-        datasets: [{
-          label: "Quantidade por Tipo",
-          data: valores,
-          backgroundColor: cores,
-          borderRadius: 6
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { ticks: { color: "#ffffff" }, grid: { color: "rgba(255,255,255,0.1)" } },
-          x: { ticks: { color: "#ffffff" }, grid: { display: false } }
-        }
-      }
-    });
-
-    const ctxPizza = document.getElementById("graficoPizza").getContext("2d");
-    chartPizza = new Chart(ctxPizza, {
-      type: "pie",
-      data: {
-        labels: labels,
-        datasets: [{
-          data: valores,
-          backgroundColor: cores
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: "#ffffff", font: { size: 10 } }, position: "bottom" }
-        }
-      }
-    });
-  }
-
-  function atualizarInterface() {
-    const totais = calcularTotais();
-    atualizarGraficos(totais);
-    renderizarLista();
-  }
-
-  function enviarWhatsApp(apenasMarcados) {
-    let listaParaEnviar = apenasMarcados ? dados.filter(i => i.selecionado) : dados;
-
-    if (listaParaEnviar.length === 0) {
-      mostrarToast("⚠️ Nenhum registro para enviar!", "#ef4444");
+    if (!campos.data || !campos.unidade || !campos.lote || !campos.ordem || !campos.item ||
+        !campos.quantidade || !campos.tipo) {
+      mostrarToast("Preencha todos os campos obrigatórios!", "#ef4444");
       return;
     }
 
-    let texto = "*📦 RELATÓRIO DE PRODUÇÃO - PRODCONTROL*\n\n";
+    const btnRegistrar = document.getElementById("btn-registrar");
+    btnRegistrar.disabled = true;
 
-    listaParaEnviar.forEach((item, i) => {
-      const dataFormatada = formatarDataBR(item.data);
-      texto += `*${i + 1}. LOTE: ${item.lote} - ${item.tipo}*\n`;
-      texto += `📅 Data: ${dataFormatada}\n`;
-      texto += `🏢 Unidade: ${item.unidade}\n`;
-      texto += `🔢 Ordem: ${item.ordem} (Qtd: ${item.qtdOrdem || '-'})\n`;
-      texto += `📦 Item: ${item.item || '-'}\n`;
-      texto += `📝 Desc: ${item.descricao || '-'}\n`;
-      texto += `🎭 Máscara: ${item.mascara || '-'}\n`;
-      texto += `📊 Qtd Lance: ${item.quantidade}\n`;
-      if (item.observacao) texto += `💬 Obs: ${item.observacao}\n`;
-      texto += `------------------------------------\n`;
+    try {
+      if (indexEditando !== null) {
+        await updateDoc(doc(db, "empresas", empresaId, "lancamentos", indexEditando), {
+          ...campos,
+          atualizadoEm: serverTimestamp(),
+          atualizadoPor: auth.currentUser.email
+        });
+        indexEditando = null;
+        btnRegistrar.innerText = "REGISTRAR LANCE";
+      } else {
+        await addDoc(collection(db, "empresas", empresaId, "lancamentos"), {
+          ...campos,
+          turno: descobrirTurnoPorHora(),
+          arquivado: false,
+          criadoEm: serverTimestamp(),
+          criadoPor: auth.currentUser.email
+        });
+      }
+      limparForm();
+      mostrarToast("Registrado com sucesso!", "#22c55e");
+    } catch (erro) {
+      console.error(erro);
+      mostrarToast("Erro ao salvar. Tente novamente.", "#ef4444");
+    } finally {
+      btnRegistrar.disabled = false;
+    }
+  }
+
+  function prepararEdicao(id) {
+    const d = dados.find(x => x.id === id);
+    if (!d) return;
+    indexEditando = id;
+    document.getElementById("data").value = d.data;
+    document.getElementById("unidade").value = d.unidade;
+    document.getElementById("lote").value = d.lote;
+    document.getElementById("ordem").value = d.ordem;
+    document.getElementById("qtdOrdem").value = d.qtdOrdem || "";
+    document.getElementById("item").value = d.item;
+    document.getElementById("descricao").value = d.descricao || "";
+    document.getElementById("mascara").value = d.mascara;
+    document.getElementById("quantidade").value = d.quantidade || "";
+    document.getElementById("observacao").value = d.observacao || "";
+    document.getElementById("tipo").value = d.tipo;
+    document.getElementById("btn-registrar").innerText = "SALVAR ALTERAÇÕES";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  /* ======================= EXCLUIR / RESTAURAR ======================= */
+  async function moverParaLixeira(id) {
+    try {
+      await updateDoc(doc(db, "empresas", empresaId, "lancamentos", id), { arquivado: true });
+    } catch (erro) {
+      console.error(erro);
+      mostrarToast(erro.code === "permission-denied" ? "Só o Coordenador de PCP pode excluir." : "Erro ao excluir.", "#ef4444");
+    }
+  }
+
+  async function restaurar(id) {
+    try {
+      await updateDoc(doc(db, "empresas", empresaId, "lancamentos", id), { arquivado: false });
+    } catch (erro) {
+      console.error(erro);
+      mostrarToast(erro.code === "permission-denied" ? "Só o Coordenador de PCP pode restaurar." : "Erro ao restaurar.", "#ef4444");
+    }
+  }
+
+  /* ======================= RENDERIZAÇÃO ======================= */
+  function renderizar() {
+    const lista = document.getElementById("lista");
+    const listaLixeira = document.getElementById("listaLixeira");
+    lista.innerHTML = "";
+    listaLixeira.innerHTML = "";
+    const busca = document.getElementById("busca").value.toLowerCase();
+
+    let tVol = 0, tPca = 0, tSob = 0, tRetPintura = 0, tRetFiletacao = 0, tRef = 0;
+    let algumVisivel = false;
+
+    dados.forEach((d) => {
+      const matchBusca = String(d.lote).toLowerCase().includes(busca) ||
+                         String(d.ordem).toLowerCase().includes(busca) ||
+                         String(d.mascara).toLowerCase().includes(busca);
+      if (!matchBusca) return;
+      algumVisivel = true;
+
+      const qtd = d.quantidade || 0;
+      if (d.tipo === "VOLUME") tVol += qtd;
+      else if (d.tipo === "PEÇA") tPca += qtd;
+      else if (d.tipo === "SOBRA") tSob += qtd;
+      else if (d.tipo === "RETRABALHO - PINTURA") tRetPintura += qtd;
+      else if (d.tipo === "RETRABALHO - FILETAÇÃO") tRetFiletacao += qtd;
+      else if (d.tipo === "REFUGO") tRef += qtd;
+
+      let classeBorda = "tipo-peca";
+      if (d.tipo === "VOLUME") classeBorda = "tipo-volume";
+      if (d.tipo === "SOBRA") classeBorda = "tipo-sobra";
+      if (d.tipo === "RETRABALHO - PINTURA") classeBorda = "tipo-retrabalho-pintura";
+      if (d.tipo === "RETRABALHO - FILETAÇÃO") classeBorda = "tipo-retrabalho-filetacao";
+      if (d.tipo === "REFUGO") classeBorda = "tipo-refugo";
+
+      const textQtdOrdem = d.qtdOrdem ? `<br>📋 Qtd da ordem: ${escapeHTML(d.qtdOrdem)}` : "";
+      const textDescricao = d.descricao ? `<br>📝 Descrição: ${escapeHTML(d.descricao)}` : "";
+      const textObs = d.observacao ? `<br>📝 Obs: ${escapeHTML(d.observacao)}` : "";
+      const mascaraLimpa = escapeHTML(String(d.mascara).replace(/\|/g, "").trim());
+      const autor = d.criadoPor ? `<span class="autor-item">Registrado por: ${escapeHTML(d.criadoPor)}</span>` : "";
+
+      const li = document.createElement("li");
+      li.className = classeBorda;
+      li.innerHTML = `
+        <input type="checkbox" class="chk-item" data-id="${d.id}">
+        <div class="info-item">
+            <span class="titulo-lote">LOTE: ${escapeHTML(d.lote)}</span><br>
+            Data: ${formatarDataBR(d.data)}<br>
+            Unidade: ${escapeHTML(d.unidade)}<br>
+            Ordem: ${escapeHTML(d.ordem)}${textQtdOrdem}<br>
+            🔢 Item: ${escapeHTML(d.item)}${textDescricao}<br>
+            🎭 Máscara: ${mascaraLimpa}<br>
+            📊 Qtd: ${qtd} (${escapeHTML(d.tipo)})${textObs}
+            ${autor}
+        </div>
+        <div class="acoes-item">
+          <button class="edit-btn" data-id="${d.id}">📝</button>
+          ${papelUsuario === "coordenador" ? `<button class="delete-btn" data-id="${d.id}">🗑️</button>` : ""}
+        </div>`;
+      lista.appendChild(li);
     });
 
-    const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-    window.open(url, "_blank");
+    if (!algumVisivel) {
+      lista.innerHTML = `<li class="vazio" style="background:none; box-shadow:none; border:none;">Nenhum lançamento encontrado.</li>`;
+    }
+
+    if (lixeira.length === 0) {
+      listaLixeira.innerHTML = `<li class="vazio" style="background:none; box-shadow:none; border:none;">Lixeira vazia.</li>`;
+    } else {
+      lixeira.forEach((d) => {
+        const li = document.createElement("li");
+        li.style.background = "rgba(255,255,255,0.05)";
+        li.innerHTML = `<div class="info-item">Lote: ${escapeHTML(d.lote)} - ${escapeHTML(d.mascara)} (${escapeHTML(d.tipo)})</div>
+          <button class="restaurar-btn" data-id="${d.id}" style="width:auto; padding:5px 10px; font-size:12px; background:#f59e0b;">RESTAURAR</button>`;
+        listaLixeira.appendChild(li);
+      });
+    }
+
+    document.getElementById("res-volume").innerText = "Vol: " + tVol;
+    document.getElementById("res-peca").innerText = "Pç: " + tPca;
+    document.getElementById("res-sobra").innerText = "Sob: " + tSob;
+    document.getElementById("res-ret-pintura").innerText = "Ret. Pintura: " + tRetPintura;
+    document.getElementById("res-ret-filetacao").innerText = "Ret. Filetação: " + tRetFiletacao;
+    document.getElementById("res-refugo").innerText = "Ref: " + tRef;
+    atualizarGrafico(tVol, tPca, tSob, tRetPintura, tRetFiletacao, tRef);
+
+    document.querySelectorAll(".edit-btn").forEach(btn => btn.onclick = (e) => prepararEdicao(e.currentTarget.dataset.id));
+    document.querySelectorAll(".delete-btn").forEach(btn => btn.onclick = (e) => moverParaLixeira(e.currentTarget.dataset.id));
+    document.querySelectorAll(".restaurar-btn").forEach(btn => btn.onclick = (e) => restaurar(e.currentTarget.dataset.id));
   }
 
-  function compartilharResumoGeral() {
-    const totais = calcularTotais();
-    let texto = "*📊 RESUMO DE PRODUÇÃO - PRODCONTROL*\n\n";
-    texto += `🟣 Volume: ${totais.VOLUME}\n`;
-    texto += `🔵 Peça: ${totais.PEÇA}\n`;
-    texto += `🟢 Sobra: ${totais.SOBRA}\n`;
-    texto += `🟠 Ret. Pintura: ${totais["RETRABALHO - PINTURA"]}\n`;
-    texto += `🟧 Ret. Filetação: ${totais["RETRABALHO - FILETAÇÃO"]}\n`;
-    texto += `🔴 Refugo: ${totais.REFUGO}\n\n`;
-    texto += `*Total Geral de Itens:* ${Object.values(totais).reduce((a, b) => a + b, 0)}\n`;
+  // Gráficos atualizam sozinhos sempre que "renderizar()" roda — e "renderizar()"
+  // roda a cada mudança em tempo real vinda do Firestore (onSnapshot).
+  const LABELS_TIPOS = ["Volume", "Peça", "Sobra", "Ret. Pintura", "Ret. Filetação", "Refugo"];
+  const CORES_TIPOS = ["#a855f7", "#3b82f6", "#22c55e", "#f59e0b", "#d97706", "#ef4444"];
 
-    const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-    window.open(url, "_blank");
+  function atualizarGrafico(vol, pca, sob, retPintura, retFiletacao, ref) {
+    if (typeof Chart === "undefined") return;
+    const valores = [vol, pca, sob, retPintura, retFiletacao, ref];
+
+    if (!graficoTipos) {
+      const ctx = document.getElementById("grafico-tipos").getContext("2d");
+      graficoTipos = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: LABELS_TIPOS,
+          datasets: [{
+            data: valores,
+            backgroundColor: CORES_TIPOS,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#f1f1f1", font: { size: 10 } }, grid: { display: false } },
+            y: { beginAtZero: true, ticks: { color: "#f1f1f1", precision: 0 }, grid: { color: "rgba(255,255,255,0.08)" } }
+          }
+        }
+      });
+    } else {
+      graficoTipos.data.datasets[0].data = valores;
+      graficoTipos.update();
+    }
+
+    if (!graficoPizza) {
+      const ctxPizza = document.getElementById("grafico-pizza").getContext("2d");
+      graficoPizza = new Chart(ctxPizza, {
+        type: "pie",
+        data: {
+          labels: LABELS_TIPOS,
+          datasets: [{ data: valores, backgroundColor: CORES_TIPOS }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: "#f1f1f1", font: { size: 10 } }, position: "bottom" } }
+        }
+      });
+    } else {
+      graficoPizza.data.datasets[0].data = valores;
+      graficoPizza.update();
+    }
   }
 
-  function mostrarToast(mensagem, corFundo = "#22c55e") {
-    const toast = document.getElementById("toast");
-    toast.style.background = corFundo;
-    toast.innerText = mensagem;
-    toast.style.display = "block";
-    setTimeout(() => { toast.style.display = "none"; }, 3000);
+  document.getElementById("btn-registrar").onclick = registrar;
+  document.getElementById("busca").onkeyup = renderizar;
+
+  document.getElementById("btn-limpar-sel").onclick = () => {
+    document.querySelectorAll(".chk-item").forEach(c => c.checked = false);
+    mostrarToast("Seleção Limpa", "#3b82f6");
+  };
+
+  document.getElementById("btn-excluir-sel").onclick = async () => {
+    const checkboxes = document.querySelectorAll(".chk-item:checked");
+    if (checkboxes.length === 0) { mostrarToast("Marque itens primeiro!", "#f59e0b"); return; }
+    if (!confirm(`Excluir ${checkboxes.length} item(ns) marcado(s)?`)) return;
+    await Promise.all(Array.from(checkboxes).map(c => moverParaLixeira(c.dataset.id)));
+  };
+
+  /* ======================= COMPARTILHAR NO WHATSAPP ======================= */
+  function gerarTextoFormatoWhats(listaItens, titulo) {
+    const horaAtual = new Date().getHours();
+    let saudacao = "Boa tarde", turno = "Tarde";
+    if (horaAtual >= 0 && horaAtual < 12) { saudacao = "Bom dia"; turno = "Manhã"; }
+    else if (horaAtual >= 18) { saudacao = "Boa noite"; turno = "Noite"; }
+
+    let texto = `*PRODCONTROL - ${titulo}*\r\n\r\n${saudacao}\r\n\r\nTurno: ${turno}\r\n\r\n`;
+    listaItens.forEach((item, index) => {
+      const mascaraLimpa = String(item.mascara).replace(/\|/g, "").trim();
+      texto += `📅 *Data:* ${formatarDataBR(item.data)}\r\n`;
+      texto += `🏢 *Unidade:* ${item.unidade}\r\n`;
+      texto += `🔢 *Lote:* ${item.lote}\r\n`;
+      texto += `📄 *Ordem:* ${item.ordem}\r\n`;
+      texto += `📋 *Qtd da ordem:* ${item.qtdOrdem || ""}\r\n`;
+      texto += `🔢 *Item:* ${item.item}\r\n`;
+      texto += `📝 *Descrição:* ${item.descricao || ""}\r\n`;
+      texto += `🎭 *Máscara:* ${mascaraLimpa}\r\n`;
+      texto += `📊 *Qtd:* ${item.quantidade || 0} (${item.tipo})\r\n`;
+      texto += `📝 *Obs:* ${item.observacao || ""}\r\n`;
+      if (index < listaItens.length - 1) texto += `------------------------\r\n`;
+    });
+    return encodeURIComponent(texto);
   }
+
+  document.getElementById("btn-enviar-sel").onclick = () => {
+    const checkboxes = document.querySelectorAll(".chk-item:checked");
+    if (checkboxes.length === 0) { mostrarToast("Marque itens primeiro!", "#f59e0b"); return; }
+    const idsSelecionados = new Set(Array.from(checkboxes).map(c => c.dataset.id));
+    const itensSelecionados = dados.filter(d => idsSelecionados.has(d.id));
+    window.open(`https://wa.me/?text=${gerarTextoFormatoWhats(itensSelecionados, "RELATÓRIO DE LANÇAMENTOS")}`, "_blank");
+  };
+
+  document.getElementById("btn-enviar-tudo").onclick = () => {
+    if (dados.length === 0) { mostrarToast("Histórico vazio!", "#f59e0b"); return; }
+    window.open(`https://wa.me/?text=${gerarTextoFormatoWhats(dados, "RELATÓRIO COMPLETO DE LANÇAMENTOS")}`, "_blank");
+  };
+
+  document.getElementById("btn-compartilhar-tudo").onclick = () => {
+    const v = document.getElementById("res-volume").innerText;
+    const p = document.getElementById("res-peca").innerText;
+    const s = document.getElementById("res-sobra").innerText;
+    const rp = document.getElementById("res-ret-pintura").innerText;
+    const rf = document.getElementById("res-ret-filetacao").innerText;
+    const f = document.getElementById("res-refugo").innerText;
+    const msg = `*RESUMO GERAL PRODCONTROL*\r\n\r\n📦 ${v}\r\n🧩 ${p}\r\n✅ ${s}\r\n🎨 ${rp}\r\n🪚 ${rf}\r\n❌ ${f}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+  };
+
+  /* ======================= EXPORTAR PARA EXCEL ======================= */
+  function exportarExcel(listaItens, nomeArquivo) {
+    if (listaItens.length === 0) { mostrarToast("Nada para exportar!", "#f59e0b"); return; }
+    if (typeof XLSX === "undefined") { mostrarToast("Não foi possível carregar o Excel. Verifique sua internet.", "#ef4444"); return; }
+
+    const linhas = listaItens.map(item => ({
+      "Data": formatarDataBR(item.data),
+      "Unidade": item.unidade,
+      "Lote": item.lote,
+      "Ordem": item.ordem,
+      "Qtd da Ordem": item.qtdOrdem || "",
+      "Item": item.item,
+      "Descrição": item.descricao || "",
+      "Máscara": String(item.mascara || "").replace(/\|/g, "").trim(),
+      "Quantidade": item.quantidade || 0,
+      "Tipo": item.tipo,
+      "Observação": item.observacao || "",
+      "Turno": item.turno || "",
+      "Registrado por": item.criadoPor || ""
+    }));
+
+    const planilha = XLSX.utils.json_to_sheet(linhas);
+    const livro = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(livro, planilha, "Lançamentos");
+    XLSX.writeFile(livro, nomeArquivo);
+  }
+
+  document.getElementById("btn-exportar-sel").onclick = () => {
+    const checkboxes = document.querySelectorAll(".chk-item:checked");
+    if (checkboxes.length === 0) { mostrarToast("Marque itens primeiro!", "#f59e0b"); return; }
+    const idsSelecionados = new Set(Array.from(checkboxes).map(c => c.dataset.id));
+    exportarExcel(dados.filter(d => idsSelecionados.has(d.id)), `prodcontrol-selecionados-${Date.now()}.xlsx`);
+  };
+
+  document.getElementById("btn-exportar-tudo").onclick = () => {
+    exportarExcel(dados, `prodcontrol-completo-${Date.now()}.xlsx`);
+  };
+
+  document.getElementById("btn-esvaziar-lixeira").onclick = async () => {
+    if (lixeira.length === 0) return;
+    if (!confirm("Deseja realmente esvaziar a lixeira completamente? Essa ação não pode ser desfeita.")) return;
+    try {
+      await Promise.all(lixeira.map(item => deleteDoc(doc(db, "empresas", empresaId, "lancamentos", item.id))));
+      mostrarToast("Lixeira esvaziada.", "#22c55e");
+    } catch (erro) {
+      console.error(erro);
+      mostrarToast(erro.code === "permission-denied" ? "Só o Coordenador de PCP pode esvaziar a lixeira." : "Erro ao esvaziar lixeira.", "#ef4444");
+    }
+  };
 </script>
-
 </body>
 </html>
